@@ -14,6 +14,14 @@ app.use(cors({
 }));
 app.use(bodyParser.json());
 
+// Nocache middleware to prevent caching of API responses
+app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    res.set('Expires', '0');
+    res.set('Pragma', 'no-cache');
+    next();
+});
+
 // Validate env
 const publishableKey = process.env.STRIPE_PUBLISHABLE_KEY || '';
 const secretKey = process.env.STRIPE_SECRET_KEY || '';
