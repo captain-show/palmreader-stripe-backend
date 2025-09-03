@@ -36,7 +36,10 @@ const stripe = require('stripe')(secretKey, {
 
 // API: public config
 app.get('/api/config', (req, res) => {
-    res.json({ publishableKey });
+    res.json({ 
+        publishableKey,
+        applePayEnabled: !!publishableKey && !!secretKey
+    });
 });
 
 // Helper to fetch product info safely
