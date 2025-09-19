@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 
 // Validate env
 const publishableKey = process.env.STRIPE_PUBLISHABLE_KEY || '';
-const secretKey = process.env.STRIPE_SECRET_KEY || '';
+const secretKey = process.env.STRIPE_SECRET_KEY_TEST || '';
 
 if (!secretKey) {
     console.warn('STRIPE_SECRET_KEY is not set. Set it in backend/.env');
