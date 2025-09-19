@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 });
 
 // Validate env
-const publishableKey = process.env.STRIPE_PUBLISHABLE_KEY || '';
+const publishableKey = 'pk_test_51Qk1KmK2gOb0VfuWHEe7OQZtvhofHptdmgVuPKC1w0IrZSdvya7JTHX7U1WXsR05gNd2bveCRXWDMO2xXbKQIUin00wrmjMD2M'|| '';
 const secretKey = process.env.STRIPE_SECRET_KEY_TEST || '';
 
 if (!secretKey) {
