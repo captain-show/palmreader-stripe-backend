@@ -23,8 +23,8 @@ app.use((req, res, next) => {
 });
 
 // Validate env
-const publishableKey = 'pk_test_51Qk1KmK2gOb0VfuWHEe7OQZtvhofHptdmgVuPKC1w0IrZSdvya7JTHX7U1WXsR05gNd2bveCRXWDMO2xXbKQIUin00wrmjMD2M'|| '';
-const secretKey = process.env.STRIPE_SECRET_KEY_TEST || '';
+const publishableKey = process.env.STRIPE_PUBLISHABLE_KEY || '';
+const secretKey = process.env.STRIPE_SECRET_KEY || '';
 
 if (!secretKey) {
     console.warn('STRIPE_SECRET_KEY is not set. Set it in backend/.env');
