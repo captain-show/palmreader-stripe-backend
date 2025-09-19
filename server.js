@@ -44,15 +44,28 @@ app.get('/api/config', (req, res) => {
 
 // Helper to fetch product info safely
 async function getProductDetails(productId) {
-    if (!productId) return null;
+    if (!productId) {
+        console.error('getProductDetails: No productId provided');
+        return null;
+    }
+    
     try {
         const product = await stripe.products.retrieve(productId);
+        console.log(`getProductDetails: Retrieved product ${productId}:`, product.name);
+        
         const prices = await stripe.prices.list({
             product: productId,
             active: true,
             limit: 1
         });
+        
+        if (!prices.data || prices.data.length === 0) {
+            console.error(`getProductDetails: No active prices found for product ${productId}`);
+            return null;
+        }
+        
         const price = prices.data[0];
+        console.log(`getProductDetails: Found price for ${productId}:`, price.id, price.unit_amount);
         
         return {
             id: product.id,
@@ -64,6 +77,7 @@ async function getProductDetails(productId) {
             priceId: price?.id || null,
         };
     } catch (err) {
+        console.error(`getProductDetails: Error fetching product ${productId}:`, err.message);
         return null;
     }
 }
@@ -72,6 +86,8 @@ async function getProductDetails(productId) {
 app.get('/api/products', async (req, res) => {
     try {
         const { weekly, monthly, yearly } = req.query;
+        
+        console.log('API /api/products called with:', { weekly, monthly, yearly });
         
         if (!weekly || !monthly || !yearly) {
             return res.status(400).json({ error: { message: 'Missing product IDs' } });
@@ -82,6 +98,23 @@ app.get('/api/products', async (req, res) => {
             getProductDetails(monthly),
             getProductDetails(yearly),
         ]);
+        
+        console.log('API /api/products results:', { weekly: w, monthly: m, yearly: y });
+        
+        // Проверяем, что все продукты найдены
+        if (!w || !m || !y) {
+            const missing = [];
+            if (!w) missing.push('weekly');
+            if (!m) missing.push('monthly');
+            if (!y) missing.push('yearly');
+            
+            return res.status(400).json({ 
+                error: { 
+                    message: `Products not found: ${missing.join(', ')}` 
+                } 
+            });
+        }
+        
         res.json({
             plans: {
                 weekly: w,
@@ -90,6 +123,7 @@ app.get('/api/products', async (req, res) => {
             }
         });
     } catch (err) {
+        console.error('API /api/products error:', err);
         res.status(500).json({ error: { message: 'Failed to load products' } });
     }
 });
